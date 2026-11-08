@@ -4,7 +4,7 @@
  * State lives here; everything else is pure and tested.
  */
 import { Repo, repoFrom } from './engine.js';
-import { LEVELS, goalStatus } from './levels.js';
+import { LEVELS, goalStatus, commandsFor } from './levels.js';
 import { computeLayout, nodeInner, labelInner, nodeClass, labelClass, edgeClass } from './layout.js';
 import { t } from './i18n.js';
 
@@ -41,7 +41,7 @@ const prefs = loadPrefs();
 /** index into LEVELS, or -1 for the free sandbox */
 let levelIndex = 0;
 let repo = new Repo();
-/** @type {Repo[]} */
+/** @type {{ repo: Repo, cmd: string }[]} */
 let undoStack = [];
 /** @type {string[]} */
 const cmdHistory = [];
@@ -189,8 +189,8 @@ function renderLesson() {
     els.real.hidden = false;
     els.goalsCard.hidden = false;
     els.solutionBtn.hidden = false;
-    renderChips(els.chips, lv.commands);
-    renderChips(els.solution, lv.solution);
+    renderChips(els.chips, commandsFor(lv, 'commands', prefs.lang));
+    renderChips(els.solution, commandsFor(lv, 'solution', prefs.lang));
   } else {
     els.eyebrow.textContent = '∞';
     els.title.textContent = tr('sandbox');
@@ -278,10 +278,12 @@ function runCommand(raw) {
   if (word === 'restart' || word === 'reset level' || word === 'reiniciar') return loadLevel(levelIndex);
 
   const snapshot = repo.clone();
+  const before = JSON.stringify(repo.state);
   const res = repo.run(line);
   print(res.output, res.ok ? 'out' : 'err');
-  if (res.ok) {
-    undoStack.push(snapshot);
+  // only commands that change the repo count (and can be undone); git log / status don't
+  if (res.ok && JSON.stringify(repo.state) !== before) {
+    undoStack.push({ repo: snapshot, cmd: line });
     commandsUsed++;
     refresh();
   }
@@ -289,10 +291,14 @@ function runCommand(raw) {
 
 function undo() {
   const prev = undoStack.pop();
-  if (!prev) return;
-  repo = prev;
+  if (!prev) {
+    print(tr('nothingToUndo'), 'info');
+    return;
+  }
+  repo = prev.repo;
   repo.lang = prefs.lang;
   commandsUsed = Math.max(0, commandsUsed - 1);
+  print(tr('undone', { cmd: prev.cmd }), 'info');
   refresh();
 }
 
@@ -307,7 +313,7 @@ function refresh() {
 function loadLevel(index) {
   levelIndex = index;
   const lv = level();
-  repo = repoFrom(lv ? lv.setup : SANDBOX_SETUP, prefs.lang);
+  repo = repoFrom(lv ? commandsFor(lv, 'setup', prefs.lang) : SANDBOX_SETUP, prefs.lang);
   undoStack = [];
   commandsUsed = 0;
   wasComplete = false;
@@ -388,6 +394,8 @@ for (const b of document.querySelectorAll('[data-lang]')) {
   b.addEventListener('click', () => {
     prefs.lang = /** @type {Lang} */ (b.getAttribute('data-lang'));
     savePrefs();
+    // nothing played yet: rebuild the level so its commit messages use the new language
+    if (undoStack.length === 0) loadLevel(levelIndex);
     applyLang();
   });
 }
