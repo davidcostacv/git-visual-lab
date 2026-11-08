@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Git Visual Lab</title>
+  <meta name="description" content="Learn Git by seeing it. Type real git commands and watch the commit graph change. Free, in English and Spanish.">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/level/1" aria-label="Git Visual Lab, home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M9 6v20M9 16c0-5 14-3 14-9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="9" cy="6" r="3.4" fill="currentColor"/><circle cx="9" cy="26" r="3.4" fill="currentColor"/><circle cx="23" cy="7" r="3.4" class="brand-dot"/></svg>
+      <span class="brand-name">git<span>visual</span>lab</span>
+    </a>
+    <p class="tagline" data-i18n="appTagline">Learn Git by seeing it.</p>
+    <div class="top-actions">
+      <div class="seg" role="group" aria-label="Language">
+        <button type="button" data-lang="en">EN</button>
+        <button type="button" data-lang="es">ES</button>
+      </div>
+      <div class="seg seg-theme" role="group" aria-label="Theme">
+        <button type="button" data-theme-choice="auto" data-i18n="themeAuto">Auto</button>
+        <button type="button" data-theme-choice="light" data-i18n="themeLight">Light</button>
+        <button type="button" data-theme-choice="dark" data-i18n="themeDark">Dark</button>
+      </div>
+      <a class="btn btn-ghost" id="pdf-link" href="docs/git-visual-lab-guide-en.pdf" target="_blank" rel="noopener" data-i18n="downloadPdf">Guide (PDF)</a>
+      <a class="icon-link" href="https://github.com/davidcostacv/git-visual-lab" target="_blank" rel="noopener" aria-label="Source code on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <div class="shell">
+    <nav class="levels" aria-label="Levels">
+      <h2 class="eyebrow" data-i18n="levels">Levels</h2>
+      <ol id="level-list"></ol>
+      <a class="sandbox-link" id="sandbox-link" href="#/sandbox"><span class="dot" aria-hidden="true"></span><span data-i18n="sandbox">Free sandbox</span></a>
+    </nav>
+
+    <main class="workspace">
+      <section class="lesson" aria-labelledby="level-title">
+        <p class="eyebrow" id="level-eyebrow"></p>
+        <h1 id="level-title"></h1>
+        <div class="lesson-body" id="lesson-body"></div>
+
+        <div class="goals-card" id="goals-card">
+          <h2 class="eyebrow" data-i18n="goals">Goals</h2>
+          <ul id="goal-list" class="goal-list"></ul>
+        </div>
+
+        <div class="chips" id="command-chips"></div>
+
+        <details class="real-life" id="real-life">
+          <summary data-i18n="inRealLife">In real life</summary>
+          <div id="real-body"></div>
+        </details>
+
+        <div class="lesson-actions">
+          <button type="button" class="btn btn-ghost" id="btn-undo" data-i18n="undo">Undo</button>
+          <button type="button" class="btn btn-ghost" id="btn-restart" data-i18n="restart">Restart</button>
+          <button type="button" class="btn btn-ghost" id="btn-solution" data-i18n="showSolution">Show solution</button>
+        </div>
+        <div class="chips solution" id="solution-chips" hidden></div>
+      </section>
+
+      <section class="stage" aria-label="Repository and terminal">
+        <div class="graph-panel">
+          <div class="panel-head">
+            <span class="eyebrow" data-i18n="graph">Your repository</span>
+            <span class="legend" data-i18n="legendFaded">Faded commits are not reachable from any branch, tag or HEAD.</span>
+          </div>
+          <div class="graph-scroll" id="graph-scroll">
+            <svg id="graph" class="graph" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Commit graph">
+              <g class="edges"></g><g class="nodes"></g><g class="labels"></g>
+            </svg>
+          </div>
+          <div class="success" id="success" hidden>
+            <div>
+              <strong data-i18n="done">Level complete</strong>
+              <p id="success-text"></p>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-next" data-i18n="next">Next level</button>
+          </div>
+        </div>
+
+        <div class="terminal">
+          <div class="term-out" id="term-out" aria-live="polite"></div>
+          <form class="term-in" id="term-form" autocomplete="off">
+            <label class="prompt" for="term-input" id="prompt">main $</label>
+            <input id="term-input" spellcheck="false" autocapitalize="off" data-i18n-placeholder="placeholder" placeholder="Type a git command, e.g. git commit">
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
