@@ -1,0 +1,23 @@
+{
+  "name": "git-visual-lab",
+  "version": "1.0.0",
+  "description": "Interactive, visual Git trainer. Type real git commands and watch the commit graph change. English + Spanish.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test",
+    "typecheck": "tsc -p jsconfig.json",
+    "lint": "eslint .",
+    "check": "npm run typecheck && npm run lint && npm test",
+    "pdf": "node scripts/build-pdf.mjs",
+    "start": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^26.6.6",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "typescript": "^5.7.2"
+  }
+}
