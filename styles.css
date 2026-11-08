@@ -88,6 +88,8 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+/* `hidden` must beat component rules like .btn { display: inline-flex } */
+[hidden] { display: none !important; }
 html, body { margin: 0; }
 body {
   background: var(--bg);
