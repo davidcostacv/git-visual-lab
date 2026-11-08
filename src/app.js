@@ -194,6 +194,7 @@ function renderLesson() {
   } else {
     els.eyebrow.textContent = '∞';
     els.title.textContent = tr('sandbox');
+    renderChips(els.solution, []); // no stale answer from the previous level
     els.lesson.innerHTML = `<p>${tr('sandboxIntro')}</p>`;
     els.real.hidden = true;
     els.goalsCard.hidden = true;
