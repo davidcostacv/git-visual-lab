@@ -1,6 +1,6 @@
 {
   "name": "git-visual-lab",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Interactive, visual Git trainer. Type real git commands and watch the commit graph change. English + Spanish.",
   "type": "module",
   "private": true,

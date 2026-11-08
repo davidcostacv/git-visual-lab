@@ -33,10 +33,10 @@ export class GitError extends Error {
   }
 }
 
-/** @returns {RepoState} */
-export function createState() {
+/** @param {Lang} [lang] @returns {RepoState} */
+export function createState(lang = 'en') {
   return {
-    commits: { C0: { id: 'C0', parents: [], msg: 'Initial commit', seq: 0 } },
+    commits: { C0: { id: 'C0', parents: [], msg: t(lang, 'initialCommit'), seq: 0 } },
     branches: { main: 'C0' },
     branchOrder: ['main'],
     tags: {},
@@ -64,8 +64,8 @@ const COMMIT_ID_RE = /^C\d+'*$/i;
 
 export class Repo {
   /** @param {RepoState} [state] @param {Lang} [lang] */
-  constructor(state = createState(), lang = 'en') {
-    this.state = state;
+  constructor(state = undefined, lang = 'en') {
+    this.state = state ?? createState(lang);
     this.lang = lang;
   }
 

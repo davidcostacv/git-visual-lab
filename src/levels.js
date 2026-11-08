@@ -52,9 +52,9 @@ export const LEVELS = [
       en: 'In a real project you first run <code>git add file</code> to choose what goes in the snapshot, then <code>git commit -m "what I did"</code>. A good message explains <i>why</i>.',
       es: 'En un proyecto real primero corres <code>git add archivo</code> para elegir qué entra en la foto y luego <code>git commit -m "qué hice"</code>. Un buen mensaje explica el <i>porqué</i>.',
     },
-    commands: ['git commit', 'git commit -m "message"'],
+    commands: ['git commit', 'git commit -m @message'],
     setup: [],
-    solution: ['git commit -m "Add homepage"', 'git commit -m "Add contact form"'],
+    solution: ['git commit -m @addHomepage', 'git commit -m @addContactForm'],
     goals: [
       { text: { en: 'main has 2 new commits (3 in total)', es: 'main tiene 2 commits nuevos (3 en total)' }, check: (r) => depth(r, 'main') >= 3 },
       { text: { en: 'You are still on main', es: 'Sigues en main' }, check: (r) => onBranch(r, 'main') },
@@ -95,7 +95,7 @@ export const LEVELS = [
       es: 'Párate en la rama que <i>recibe</i> el trabajo (casi siempre main) y haz merge de la otra. En GitHub, el botón "Merge pull request" hace exactamente esto.',
     },
     commands: ['git switch main', 'git merge bugfix'],
-    setup: ['git commit', 'git switch -c bugfix', 'git commit -m "Fix crash"', 'git switch main', 'git commit -m "New banner"'],
+    setup: ['git commit', 'git switch -c bugfix', 'git commit -m @fixCrash', 'git switch main', 'git commit -m @newBanner'],
     solution: ['git merge bugfix'],
     goals: [
       { text: { en: 'main contains the bugfix work', es: 'main contiene el trabajo de bugfix' }, check: (r) => r.isAncestor(r.state.branches.bugfix, r.state.branches.main) },
@@ -115,7 +115,7 @@ export const LEVELS = [
       es: 'Usa rebase para actualizar <i>tu propia</i> rama antes de abrir un pull request. Regla de oro: nunca hagas rebase de commits que otras personas ya bajaron, porque reescribe la historia.',
     },
     commands: ['git switch feature', 'git rebase main'],
-    setup: ['git commit', 'git switch -c feature', 'git commit -m "Search box"', 'git commit -m "Search results"', 'git switch main', 'git commit -m "Hotfix"'],
+    setup: ['git commit', 'git switch -c feature', 'git commit -m @searchBox', 'git commit -m @searchResults', 'git switch main', 'git commit -m @hotfix'],
     solution: ['git switch feature', 'git rebase main'],
     goals: [
       { text: { en: 'feature sits on top of the latest main', es: 'feature queda encima del último main' }, check: (r) => 'feature' in r.state.branches && r.isAncestor(r.state.branches.main, r.state.branches.feature) },
@@ -180,7 +180,7 @@ export const LEVELS = [
       es: 'Regla fácil: ¿ya hiciste push? Revert. ¿Solo está en tu PC? Reset está bien. En Git real reset tiene modos: <code>--soft</code> guarda tus cambios, <code>--hard</code> los bota.',
     },
     commands: ['git switch local', 'git reset HEAD~1', 'git switch shared', 'git revert HEAD'],
-    setup: ['git commit', 'git switch -c local', 'git commit -m "Oops (private)"', 'git switch -c shared C1', 'git commit -m "Oops (already pushed)"'],
+    setup: ['git commit', 'git switch -c local', 'git commit -m @oopsPrivate', 'git switch -c shared C1', 'git commit -m @oopsPushed'],
     solution: ['git switch local', 'git reset HEAD~1', 'git switch shared', 'git revert HEAD'],
     goals: [
       { text: { en: 'local no longer has C2 (reset)', es: 'local ya no tiene C2 (reset)' }, check: (r) => r.state.branches.local === 'C1' },
@@ -199,7 +199,7 @@ export const LEVELS = [
       es: 'Uso típico: un bug se arregla en una rama de desarrollo y necesitas solo ese arreglo en la versión ya publicada.',
     },
     commands: ['git cherry-pick C2 C4'],
-    setup: ['git commit', 'git switch -c experiments', 'git commit -m "Important fix"', 'git commit -m "Weird test"', 'git commit -m "Another fix"', 'git switch main'],
+    setup: ['git commit', 'git switch -c experiments', 'git commit -m @importantFix', 'git commit -m @weirdTest', 'git commit -m @anotherFix', 'git switch main'],
     solution: ['git cherry-pick C2 C4'],
     goals: [
       { text: { en: 'main has a copy of C2', es: 'main tiene una copia de C2' }, check: (r) => hasCopyOf(r, 'main', 'C2') },
@@ -239,7 +239,7 @@ export const LEVELS = [
     },
     commands: ['git switch -c feature/login', 'git commit', 'git switch main', 'git merge --no-ff feature/login', 'git tag v1.0'],
     setup: ['git commit'],
-    solution: ['git switch -c feature/login', 'git commit -m "Login form"', 'git commit -m "Login validation"', 'git switch main', 'git merge --no-ff feature/login', 'git tag v1.0'],
+    solution: ['git switch -c feature/login', 'git commit -m @loginForm', 'git commit -m @loginValidation', 'git switch main', 'git merge --no-ff feature/login', 'git tag v1.0'],
     goals: [
       {
         text: { en: 'feature/login has at least 2 commits of its own', es: 'feature/login tiene al menos 2 commits propios' },
@@ -262,6 +262,46 @@ export const LEVELS = [
     ],
   },
 ];
+
+/**
+ * Commit messages used by levels, in both languages. Commands reference them as
+ * `-m @key`, so a Spanish player sees Spanish messages in the graph, log and chips.
+ * @type {Record<string, Text>}
+ */
+export const COMMIT_MESSAGES = {
+  message: { en: 'message', es: 'mensaje' },
+  addHomepage: { en: 'Add homepage', es: 'Agregar página de inicio' },
+  addContactForm: { en: 'Add contact form', es: 'Agregar formulario de contacto' },
+  fixCrash: { en: 'Fix crash', es: 'Arreglar cierre inesperado' },
+  newBanner: { en: 'New banner', es: 'Nuevo banner' },
+  searchBox: { en: 'Search box', es: 'Caja de búsqueda' },
+  searchResults: { en: 'Search results', es: 'Resultados de búsqueda' },
+  hotfix: { en: 'Hotfix', es: 'Arreglo urgente' },
+  oopsPrivate: { en: 'Oops (private)', es: 'Ups (privado)' },
+  oopsPushed: { en: 'Oops (already pushed)', es: 'Ups (ya subido)' },
+  importantFix: { en: 'Important fix', es: 'Arreglo importante' },
+  weirdTest: { en: 'Weird test', es: 'Prueba rara' },
+  anotherFix: { en: 'Another fix', es: 'Otro arreglo' },
+  loginForm: { en: 'Login form', es: 'Formulario de login' },
+  loginValidation: { en: 'Login validation', es: 'Validación de login' },
+};
+
+/**
+ * Turn `git commit -m @searchBox` into `git commit -m "Caja de búsqueda"` for a language.
+ * @param {string} command @param {import('./i18n.js').Lang} lang
+ */
+export function localize(command, lang) {
+  return command.replace(/@(\w+)/g, (whole, key) => {
+    const msg = COMMIT_MESSAGES[key];
+    if (!msg) throw new Error(`Unknown commit message key: ${whole}`);
+    return `"${msg[lang]}"`;
+  });
+}
+
+/** @param {Level} level @param {'setup' | 'solution' | 'commands'} part @param {import('./i18n.js').Lang} lang */
+export function commandsFor(level, part, lang) {
+  return level[part].map((c) => localize(c, lang));
+}
 
 /** @param {Level} level @param {Repo} repo */
 export function goalStatus(level, repo) {

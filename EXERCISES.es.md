@@ -6,8 +6,8 @@ Cómo resolví cada nivel y **por qué funciona**. 🇬🇧 [In English](EXERCIS
 
 ### 1. Commits: puntos de guardado
 ```
-git commit -m "Add homepage"
-git commit -m "Add contact form"
+git commit -m "Agregar página de inicio"
+git commit -m "Agregar formulario de contacto"
 ```
 Cada commit es una foto que apunta a la anterior. `main` avanza al commit más nuevo cada vez, porque HEAD está pegado a `main`.
 
@@ -69,8 +69,8 @@ Los tags nunca se mueven, a diferencia de las ramas. Sin destino, el tag va dond
 ### 10. Desafío final: un flujo real
 ```
 git switch -c feature/login
-git commit -m "Login form"
-git commit -m "Login validation"
+git commit -m "Formulario de login"
+git commit -m "Validación de login"
 git switch main
 git merge --no-ff feature/login
 git tag v1.0

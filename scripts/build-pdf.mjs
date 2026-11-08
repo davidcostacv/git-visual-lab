@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { repoFrom } from '../src/engine.js';
-import { LEVELS } from '../src/levels.js';
+import { LEVELS, commandsFor } from '../src/levels.js';
 import { computeLayout, toSvgString } from '../src/layout.js';
 
 const root = resolve(import.meta.dirname, '..');
@@ -79,8 +79,8 @@ function html(lang) {
   const c = COPY[lang];
   const css = readFileSync(join(root, 'styles.css'), 'utf8');
   const levels = LEVELS.map((lv, i) => {
-    const before = toSvgString(computeLayout(repoFrom(lv.setup, lang)));
-    const after = toSvgString(computeLayout(repoFrom([...lv.setup, ...lv.solution], lang)));
+    const before = toSvgString(computeLayout(repoFrom(commandsFor(lv, 'setup', lang), lang)));
+    const after = toSvgString(computeLayout(repoFrom([...commandsFor(lv, 'setup', lang), ...commandsFor(lv, 'solution', lang)], lang)));
     return `
     <section class="lvl">
       <p class="eyebrow">${lang === 'es' ? 'Nivel' : 'Level'} ${i + 1} / ${LEVELS.length}</p>
@@ -91,7 +91,7 @@ function html(lang) {
         <figure><figcaption>${c.after}</figcaption>${after}</figure>
       </div>
       <p class="cmd-label">${c.solution}</p>
-      <pre>${lv.solution.map((s) => `$ ${esc(s)}`).join('\n')}</pre>
+      <pre>${commandsFor(lv, 'solution', lang).map((s) => `$ ${esc(s)}`).join('\n')}</pre>
       <p class="real"><b>${c.real}:</b> ${lv.real[lang]}</p>
     </section>`;
   }).join('');
