@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { repoFrom } from '../src/engine.js';
-import { LEVELS, isComplete } from '../src/levels.js';
+import { LEVELS, isComplete, commandsFor } from '../src/levels.js';
 import { computeLayout } from '../src/layout.js';
 
 /** @param {string} id */
@@ -15,12 +15,12 @@ const level = (id) => {
 
 test('rebase level cannot be passed by throwing the work away', () => {
   const lv = level('rebase');
-  assert.equal(isComplete(lv, repoFrom([...lv.setup, 'git switch feature', 'git reset main'])), false);
+  assert.equal(isComplete(lv, repoFrom([...commandsFor(lv, 'setup', 'en'), 'git switch feature', 'git reset main'])), false);
 });
 
 test('final level needs 2 commits of the feature itself', () => {
   const lv = level('final');
-  const one = repoFrom([...lv.setup, 'git switch -c feature/login', 'git commit', 'git switch main', 'git merge --no-ff feature/login', 'git tag v1.0']);
+  const one = repoFrom([...commandsFor(lv, 'setup', 'en'), 'git switch -c feature/login', 'git commit', 'git switch main', 'git merge --no-ff feature/login', 'git tag v1.0']);
   assert.equal(isComplete(lv, one), false);
 });
 
